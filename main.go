@@ -82,6 +82,9 @@ func respond(m string, conn net.Conn) {
 		conn.Write([]byte("STS READY"))
 	case "STRT\r\n":
 		go startSequence(conn)
+	case "?SINX\r\n":
+		response := fmt.Sprintf("SINX %d", getRandomNumber())
+		conn.Write([]byte(response))
 	default:
 		if strings.HasPrefix(m, "?NAM ") {
 			fmt.Printf("REQUEST WAS: %s", m)
@@ -182,4 +185,11 @@ func generateStringWithNumber(n int) string {
 
 	// Concatenate the input number's string representation with the random number, prefixed with "random "
 	return "random " + numberStr + "-" + strconv.Itoa(randomNumber)
+}
+
+func getRandomNumber() int {
+	rand.Seed(time.Now().UnixNano())
+
+	randomNumber := rand.Intn(10) + 1
+	return randomNumber
 }
